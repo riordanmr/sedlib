@@ -62,7 +62,7 @@ body {
     /* Modal Content/Box */
     .modalcontent {
       background-color: #fefefe;
-      margin: 10% auto; /* from the top and centered */
+      margin: 5% auto; /* from the top and centered */
       padding: 1em;
       border: 1px solid #888;
       width: 95%; /* Could be more or less, depending on screen size */
@@ -86,6 +86,10 @@ body {
     .myButton {
         font-size: 150%;
         width: 80%;
+    }
+
+    .notes {
+        font-size: 100%;
     }
     
 </style>
@@ -180,6 +184,7 @@ body {
         <p><button class="myButton" onclick="markFound(); closeModal();">Found</button></p>
         <p><button class="myButton" onclick="markStillLooking(); closeModal();">Still looking</button></p>
         <p><button class="myButton" onclick="markCantFind(); closeModal();">Can't find</button></p>
+        <p><textarea id="notes" name="notes" class="notes" rows="3"></textarea></p>
       </div>
 
     </div>
