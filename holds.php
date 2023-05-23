@@ -2,7 +2,15 @@
 <html>
 <head>
 <meta http-equiv="Content-Type"content="text/html; charset=iso-8859-1">
+<!-- This web page displays a list of items on hold, and allows the user
+ to mark items as found or not found.
+ This is to support "pulling holds" at the Sedona AZ Public Library.
+ Mark Riordan  2023-05-21
+-->
 <title>Onshelf Items</title>
+    <!-- Prevent Safari from rendering random text as phone numbers. -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="x-detect-telephone" content="no">
 <style>
 table {
     border-collapse: collapse;
@@ -39,6 +47,10 @@ body {
 
 .itemCallNum {
     color: "darkgray";
+}
+
+.idsmall {
+    font-size: 50%;
 }
     .itemtitle {
         font-family: Georgia;
@@ -188,8 +200,65 @@ body {
       </div>
 
     </div>
+    <?php
+    // This defines the DB_* constants used below.
+    require_once '/var/www/holds.config.php';
+    function connectToDb() {
+        $servername = "localhost";
+        $username = "lhg";
+        $password = "cdc6500";
+        $dbname = "holds";
     
+        // Create a new MySQLi object
+        $connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
     
+        // Check the connection
+        if ($connection->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        return $connection;
+    }
+
+    function listRecsWhere($connection, $where) {
+        $sql = "SELECT * FROM items WHERE $where ORDER BY id;";
+        $result = $connection->query($sql);
+        $prevLoc = "";
+        if ($result->num_rows > 0) {
+            // Loop through each row of the result set
+            while ($row = $result->fetch_assoc()) {
+                // Access the column values using the column names
+                $callNum = htmlspecialchars($row["callnum"]);
+                $title = htmlspecialchars($row["title"]);
+                $itemId = htmlspecialchars($row["itemid"]);
+                $curLoc = htmlspecialchars($row["curloc"]);
+                $status = htmlspecialchars($row["status"]);
+                $notes = htmlspecialchars($row["notes"]);
+
+                if($prevLoc != $curLoc) {
+                    echo "\n<h2>$curLoc</h2>\n";
+                }
+
+                echo "<div id='$itemId' class='itemdiv'>\n";
+                echo "<span class='itemCallNum'>$callNum</span><br/>\n";
+                echo "<span class='itemtitle'>$title</span><br/>\n";
+                $itemIdSpecial = "<span class='idsmall'>" . substr($itemId, 1, strlen($itemId)-4) . "</span> " . substr($itemId, strlen($itemId)-4);
+                echo "$itemIdSpecial\n";
+                echo "</div>";
+                echo "<hr class='thinline'/>\n";
+                $prevLoc = $curLoc;
+            }
+        }
+    }
+
+    function doMain() {
+        $connection = connectToDb();
+        listRecsWhere($connection, "curloc not like 'J%'");
+        listRecsWhere($connection, "curloc like 'J%'");
+        $connection->close();
+    }
+    doMain();
+    ?>
+<!--     
     <h2>BIO</h2>
 <div id="i0890" class="itemdiv">
 <span class="itemCallNum">BIOGRAPHY POLLEY, S.</span><br/>
@@ -228,7 +297,7 @@ body {
 <span class="itemtitle">Writing creative nonfiction [DVD]</span><br/>
 3225
 </div>
-<hr class="thinline"/>
+<hr class="thinline"/> -->
 
 
 </body>
