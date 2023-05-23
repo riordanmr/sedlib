@@ -26,9 +26,20 @@ table.print-friendly tr td, table.print-friendly tr th {
 body {
     font-size: 350%; font-family: Verdana;
 }
+h2 {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
 .thinline {
-    border-top: 0.5px solid;
-    margin-top: 2pt; margin-bottom: 2pt;
+    color: darkblue;
+    border-top: 4px solid;
+    margin-top: 2pt; 
+    margin-bottom: 2pt;
+}
+.thickline {
+    border: none;
+    height: 10px;
+    background: black;
 }
 .itemdiv {
     
@@ -253,6 +264,7 @@ body {
     function doMain() {
         $connection = connectToDb();
         listRecsWhere($connection, "curloc not like 'J%'");
+        echo "<hr class='thickline'/>";
         listRecsWhere($connection, "curloc like 'J%'");
         $connection->close();
     }
