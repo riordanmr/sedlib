@@ -53,11 +53,19 @@ h2 {
 }
 
 .cantfind {
+    background-color: #ffde75;
+}
+
+.problem {
     background-color: #ffc0c0;
 }
 
 .itemCallNum {
     color: "darkgray";
+}
+
+.myhidden {
+    display: none;
 }
 
 .idsmall {
@@ -124,7 +132,7 @@ h2 {
         function Init() {
             //alert("Init here");
             for (elem of document.getElementsByTagName('div')){
-              if(elem.getAttribute("class") == "itemdiv") {
+              if(elem.getAttribute("class").includes("itemdiv")) {
                   //var id = elem.id;
                   //alert("Setting onclick for " + elem.id);
                   // This does nothing:
@@ -175,6 +183,9 @@ h2 {
             document.getElementById("myModalContent").style.display = "block";
             //alert("For id " + id + " we have " + getAllProperties(document.getElementById(id).firstChild.nextElementSibling));
             document.getElementById("promptItem").innerHTML = document.getElementById(id).firstChild.nextElementSibling.innerText;
+            // Populate the dialog's notes element with the notes of the current item.
+            var notesId = "note" + currentId.substring(1);
+            document.getElementById("notes").innerHTML = document.getElementById(notesId).innerHTML;
             //modal.style.display = "block";
             //modalcontent.style.display = "block";
         }
@@ -190,6 +201,10 @@ h2 {
         function markCantFind() {
             //alert("currentId=" +currentId + " props: " + getAllProperties(document.getElementById(currentId)));
             document.getElementById(currentId).className = "itemdiv cantfind";
+        }
+
+        function markProblem() {
+            document.getElementById(currentId).className = "itemdiv problem";
         }
     </script>
 </head>
@@ -207,6 +222,7 @@ h2 {
         <p><button class="myButton" onclick="markFound(); closeModal();">Found</button></p>
         <p><button class="myButton" onclick="markStillLooking(); closeModal();">Still looking</button></p>
         <p><button class="myButton" onclick="markCantFind(); closeModal();">Can't find</button></p>
+        <p><button class="myButton" onclick="markProblem(); closeModal();">Problem</button></p>
         <p><textarea id="notes" name="notes" class="notes" rows="3"></textarea></p>
       </div>
 
@@ -249,11 +265,16 @@ h2 {
                     echo "\n<h2>$curLoc</h2>\n";
                 }
 
-                echo "<div id='$itemId' class='itemdiv'>\n";
+                $itemclass = "itemdiv";
+                if($status=="found" || $status == "cantfind") {
+                    $itemclass = $itemclass . " " . $status; 
+                }
+                echo "<div id='i$itemId' class='$itemclass'>\n";
                 echo "<span class='itemCallNum'>$callNum</span><br/>\n";
                 echo "<span class='itemtitle'>$title</span><br/>\n";
                 $itemIdSpecial = "<span class='idsmall'>" . substr($itemId, 1, strlen($itemId)-4) . "</span> " . substr($itemId, strlen($itemId)-4);
-                echo "$itemIdSpecial\n";
+                echo "$itemIdSpecial";
+                echo "<span id='note$itemId' class='myhidden'>$notes</span>\n";
                 echo "</div>";
                 echo "<hr class='thinline'/>\n";
                 $prevLoc = $curLoc;
@@ -270,47 +291,6 @@ h2 {
     }
     doMain();
     ?>
-<!--     
-    <h2>BIO</h2>
-<div id="i0890" class="itemdiv">
-<span class="itemCallNum">BIOGRAPHY POLLEY, S.</span><br/>
-<span class="itemtitle">Run towards the danger : confrontations with...</span><br/>
-0890
-</div>
-<hr class="thinline"/>
-
-<h2>CDBK</h2>
-
-<div id="i5479" class="itemdiv">
-    <span class="itemCallNum">CDBOOK 979.132 FEDARKO</span><br/>
-<span class="itemtitle">The Emerald Mile [CD book] : the epic story...</span><br/>
-5479
-</div>
-<hr class="thinline"/>
-
-<div id="i2766" class="itemdiv">
-    <span class="itemCallNum">CDBOOK EVANOVICH, J.</span><br/>
-<span class="itemtitle">Game on [CD book] : tempting twenty-eight...</span><br/>
-2766
-</div>
-<hr class="thinline"/>
-
-<h2>DVD</h2>
-
-<div id="i5457" class="itemdiv">
-    <span class="itemCallNum">591.513 HOW</span><br/>
-    <span class="itemtitle">How smart are animals? [widescreen DVD]</span><br/>
-    5457
-</div>
-<hr class="thinline"/>
-
-<div id="i3225" class="itemdiv">
-    <span class="itemCallNum">808.02 WRITING</span><br/>
-<span class="itemtitle">Writing creative nonfiction [DVD]</span><br/>
-3225
-</div>
-<hr class="thinline"/> -->
-
 
 </body>
 </html>
