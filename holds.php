@@ -193,9 +193,9 @@ h2 {
         function postItemStatus(status) {
             // Create the JSON data to be sent in the request body
             var requestData = {
-                itemId: currentId,
+                itemId: currentId.substr(1),
                 status: status,
-                notes: document.getElementById("notes").innerHTML
+                notes: document.getElementById("notes").value
             };
 
             // Make the REST request
@@ -292,8 +292,10 @@ h2 {
                     echo "\n<h2>$curLoc</h2>\n";
                 }
 
+                // Set the class of the item based on its status from the DB.
+                // Check the DB values to prevent HTML injection (Cross Site Scripting).
                 $itemclass = "itemdiv";
-                if($status=="found" || $status == "cantfind") {
+                if($status=="found" || $status == "cantfind" || $status == "problem") {
                     $itemclass = $itemclass . " " . $status; 
                 }
                 echo "<div id='i$itemId' class='$itemclass'>\n";
