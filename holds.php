@@ -190,21 +190,53 @@ h2 {
             //modalcontent.style.display = "block";
         }
 
+        function postItemStatus(status) {
+            // Create the JSON data to be sent in the request body
+            var requestData = {
+                itemId: currentId,
+                status: status,
+                notes: document.getElementById("notes").innerHTML
+            };
+
+            // Make the REST request
+            fetch('postitem.php', {
+                method: 'POST',
+                headers: {        
+                    'Accept': 'application/json',        
+                    'Content-Type': 'application/json',    
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Process the response data
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle any errors
+                console.error('Error:', error);
+            });
+        }
+
         function markFound() {
             document.getElementById(currentId).className = "itemdiv found";
+            postItemStatus("found");
         }
 
         function markStillLooking() {
             document.getElementById(currentId).className = "itemdiv stilllooking";
+            postItemStatus("");
         }
 
         function markCantFind() {
             //alert("currentId=" +currentId + " props: " + getAllProperties(document.getElementById(currentId)));
             document.getElementById(currentId).className = "itemdiv cantfind";
+            postItemStatus("cantfind");
         }
 
         function markProblem() {
             document.getElementById(currentId).className = "itemdiv problem";
+            postItemStatus("problem");
         }
     </script>
 </head>
@@ -231,11 +263,6 @@ h2 {
     // This defines the DB_* constants used below.
     require_once '/var/www/holds.config.php';
     function connectToDb() {
-        $servername = "localhost";
-        $username = "lhg";
-        $password = "cdc6500";
-        $dbname = "holds";
-    
         // Create a new MySQLi object
         $connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
     
