@@ -85,7 +85,6 @@ function parseItem($itemText, $connection) {
     $stmt = $connection->prepare("INSERT INTO items (callnum, copynum, title, itemid, itemtype, curloc)" .
         " VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssss", $callNum, $copyNum, $itemTitle, $itemId, $itemType, $itemLoc);
-//        " VALUES ('$callNum', $copyNum, '$itemTitle', '$itemId', '$itemType', '$itemLoc')";
 
     if ($stmt->execute()  === TRUE) {
         //echo "New record inserted successfully";
@@ -133,8 +132,6 @@ function main() {
         $connection->close();
     }
 }
-
-
 
 main();
 

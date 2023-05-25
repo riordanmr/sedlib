@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type"content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- This web page displays a list of items on hold, and allows the user
  to mark items as found or not found.
  This is to support "pulling holds" at the Sedona AZ Public Library.
