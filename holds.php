@@ -12,65 +12,100 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="x-detect-telephone" content="no">
 <style>
-table {
-    border-collapse: collapse;
-}
+    /* Thanks to https://stackoverflow.com/questions/256811/how-do-you-create-non-scrolling-div-at-the-top-of-an-html-page-without-two-sets */
+    body {
+        /* Disable scrollbars and ensure that the body fills the window */
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+    .toppanel {
+        position: absolute; top: 0px; width:98%; height: 3em; bottom: 0;
+        font-size: 70%;
+    }
+    .mainpanel {
+        position: absolute; top: 60px; overflow: auto; width: 100%; bottom: 0;
+    }
+    .lookinglabel {
 
-tr {
-    border-top: 1px solid #000;
-    border-bottom: 1px solid #000;
-}
-table.print-friendly tr td, table.print-friendly tr th {
-    page-break-inside: avoid;
-}
-body {
-    font-size: 350%; font-family: Verdana;
-}
-h2 {
-    margin-top: 0.3em;
-    margin-bottom: 0.3em;
-}
-.thinline {
-    color: darkblue;
-    border-top: 4px solid;
-    margin-top: 2pt; 
-    margin-bottom: 2pt;
-}
-.thickline {
-    border: none;
-    height: 10px;
-    background: black;
-}
-.itemdiv {
-    
-}
-.found {
-    background-color: #d0ffd0;
-    color: gray;
-}
+    }
+    .foundlabel {
+        color: #30c030;
+    }
+    .cantfindlabel {
+        color: #8B8000;
+    }
+    .problemlabel {
+        color: #ff3030;
+    }
+    .showhide {
+        float: right; text-decoration: underline;
+    }
+    table {
+        border-collapse: collapse;
+    }
 
-.stilllooking {
-}
+    tr {
+        border-top: 1px solid #000;
+        border-bottom: 1px solid #000;
+    }
+    table.print-friendly tr td, table.print-friendly tr th {
+        page-break-inside: avoid;
+    }
+    body {
+        font-size: 350%; font-family: Verdana;
+    }
+    h2 {
+        margin-top: 0.3em;
+        margin-bottom: 0.3em;
+    }
+    .sepline {
+        color: darkblue;
+        border-top: 4px solid;
+        margin-top: 2pt; 
+        margin-bottom: 2pt;
+    }
+    .thickline {
+        border: none;
+        height: 10px;
+        background: black;
+    }
+    .thinline {
+        height: 2px; 
+        border: none; 
+        background-color: #000;
+        margin: 0px;
+    }
+    .itemdiv {
+        
+    }
+    .found {
+        background-color: #d0ffd0;
+        color: gray;
+    }
 
-.cantfind {
-    background-color: #ffde75;
-}
+    .stilllooking {
+    }
 
-.problem {
-    background-color: #ffc0c0;
-}
+    .cantfind {
+        background-color: #ffde75;
+    }
 
-.itemCallNum {
-    color: "darkgray";
-}
+    .problem {
+        background-color: #ffc0c0;
+    }
 
-.myhidden {
-    display: none;
-}
+    .itemCallNum {
+        color: "darkgray";
+    }
 
-.idsmall {
-    font-size: 50%;
-}
+    .myhidden {
+        display: none;
+    }
+
+    .idsmall {
+        font-size: 50%;
+    }
     .itemtitle {
         font-family: Georgia;
     }
@@ -124,7 +159,7 @@ h2 {
     }
     
 </style>
-<!-- Author: Mark Riordan -->
+    <script src="dynamicallyAccessCSS.js"></script>
     <script>
         var modal; 
         var currentId;
@@ -153,6 +188,9 @@ h2 {
                 modal.style.display = "none";
               }
             }
+
+            postItemStatus("zzz", "badstat", "");
+
         }
 
         // Function to open the modal
@@ -190,12 +228,12 @@ h2 {
             //modalcontent.style.display = "block";
         }
 
-        function postItemStatus(status) {
+        function postItemStatus(itemIdIn, statusIn, notesIn) {
             // Create the JSON data to be sent in the request body
             var requestData = {
-                itemId: currentId.substr(1),
-                status: status,
-                notes: document.getElementById("notes").value
+                itemId: itemIdIn,
+                status: statusIn,
+                notes: notesIn
             };
 
             // Make the REST request
@@ -210,6 +248,10 @@ h2 {
             .then(response => response.json())
             .then(data => {
                 // Process the response data
+                document.getElementById("lookingcount").innerHTML = data.looking;
+                document.getElementById("foundcount").innerHTML = data.found;
+                document.getElementById("cantfindcount").innerHTML = data.cantfind;
+                document.getElementById("problemcount").innerHTML = data.problem;
                 console.log(data);
             })
             .catch(error => {
@@ -218,33 +260,59 @@ h2 {
             });
         }
 
+        function updateItemStatus(status) {
+            postItemStatus(currentId.substr(1), status, document.getElementById("notes").value);
+        }
+
         function markFound() {
             document.getElementById(currentId).className = "itemdiv found";
-            postItemStatus("found");
+            updateItemStatus("found");
         }
 
         function markStillLooking() {
             document.getElementById(currentId).className = "itemdiv stilllooking";
-            postItemStatus("");
+            updateItemStatus("");
         }
 
         function markCantFind() {
             //alert("currentId=" +currentId + " props: " + getAllProperties(document.getElementById(currentId)));
             document.getElementById(currentId).className = "itemdiv cantfind";
-            postItemStatus("cantfind");
+            updateItemStatus("cantfind");
         }
 
         function markProblem() {
             document.getElementById(currentId).className = "itemdiv problem";
-            postItemStatus("problem");
+            updateItemStatus("problem");
+        }
+
+        function onClickShowHide() {
+            // Toogle the show/hide status of found items.  We do this by
+            // altering the CSS rule for found items.
+            var labelShowHide = document.getElementById('showhide').text;
+            if('Hide' == labelShowHide) {
+                getCSSRule('.found').style.setProperty("display", "none", "important");
+                labelShowHide = 'Show';
+            } else {
+                getCSSRule('.found').style.setProperty("display", "", "important");
+                labelShowHide = 'Hide';
+            }
+            document.getElementById('showhide').text = labelShowHide;
         }
     </script>
 </head>
 
 <body onload="Init();">
-    <!-- Modal dialog to prompt user what to do
-    -->
-    <!-- The Modal -->
+    <!-- Non-scrolling area at top, to show counts of items with different statuses, plus Show/Hide found items control. -->
+    <div id="toppanel" class="toppanel">
+        <span class="lookinglabel">Look:</span> <span id="lookingcount"></span> &thinsp;
+        <span class="foundlabel">Found:</span> <span id="foundcount"></span> &thinsp;
+        <span class="cantfindlabel">Can't:</span> <span id="cantfindcount"></span> &thinsp;
+        <span class="problemlabel">Prob:</span> <span id="problemcount"></span>
+        <span class="showhide"><a id="showhide" onclick="onClickShowHide();">Hide</a> </span>
+        <hr class="thinline"/>
+    </div>
+    <div id="main" class="mainpanel">
+    <!-- Modal dialog to prompt user what to do -->
     <div id="myModal" class="modal">
 
       <!-- Modal content -->
@@ -304,8 +372,8 @@ h2 {
                 $itemIdSpecial = "<span class='idsmall'>" . substr($itemId, 1, strlen($itemId)-4) . "</span> " . substr($itemId, strlen($itemId)-4);
                 echo "$itemIdSpecial";
                 echo "<span id='note$itemId' class='myhidden'>$notes</span>\n";
+                echo "<hr class='sepline'/>\n";
                 echo "</div>";
-                echo "<hr class='thinline'/>\n";
                 $prevLoc = $curLoc;
             }
         }
@@ -320,6 +388,6 @@ h2 {
     }
     doMain();
     ?>
-
+</div>
 </body>
 </html>
