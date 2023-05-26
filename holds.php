@@ -329,14 +329,19 @@
     </div>
     <?php
     // This defines the DB_* constants used below.
-    require_once '/var/www/holds.config.php';
+    require_once '../../holds.config.php';
     function connectToDb() {
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
         // Create a new MySQLi object
         $connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
     
         // Check the connection
-        if ($connection->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
+        try {  
+            if ($connection->connect_error) {
+                echo "Connection failed: " . $connection->connect_error;
+            }
+        } catch(exception $e) {
+            echo "Exception: Connection failed: " . $connection->connect_error;
         }
         return $connection;
     }

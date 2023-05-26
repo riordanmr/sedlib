@@ -46,7 +46,7 @@
     </form>
     <pre><?php
     // This defines the DB_* constants used below.
-    require_once '/var/www/holds.config.php';
+    require_once '../../holds.config.php';
     function connectToDb() {
         // Create a new MySQLi object
         $connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
