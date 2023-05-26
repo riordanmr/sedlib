@@ -223,7 +223,7 @@
             document.getElementById("promptItem").innerHTML = document.getElementById(id).firstChild.nextElementSibling.innerText;
             // Populate the dialog's notes element with the notes of the current item.
             var notesId = "note" + currentId.substring(1);
-            document.getElementById("notes").innerHTML = document.getElementById(notesId).innerHTML;
+            document.getElementById("notes").value = document.getElementById(notesId).innerHTML;
             //modal.style.display = "block";
             //modalcontent.style.display = "block";
         }
