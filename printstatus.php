@@ -39,7 +39,7 @@ table.print-friendly tr td, table.print-friendly tr th {
     border-top: 0px;
 }
 .notes {
-    font-family: Georgia; font-style: italic; font-size: 120%;
+    font-family: Georgia; font-style: italic; font-size: 125%;
 }
 </style>
 <!-- Author: Mark Riordan -->
@@ -50,7 +50,7 @@ table.print-friendly tr td, table.print-friendly tr th {
 <table width="100%" border="0" cellpadding="2" bordercolor="#FFFFFF">
 <tr class="tablenoborders">
 <td valign="top" align="left" colwidth="100.0%">
-Status of Hold Items:  SED <?php echo date('m/d/Y');?></td>
+Status of Hold Items for SED <?php echo date('m/d/Y');?></td>
 </tr>
 
 <!-- <tr>
