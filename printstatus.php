@@ -49,7 +49,7 @@ table.print-friendly tr td, table.print-friendly tr th {
 <font face="Verdana">
 <table width="100%" border="0" cellpadding="2" bordercolor="#FFFFFF">
 <tr class="tablenoborders">
-<td valign="top" align="left" colwidth="100.0%">
+<td valign="top" align="left" colwidth="100.0%" colspan="6">
 Status of Hold Items for SED <?php echo date('m/d/Y');?></td>
 </tr>
 
