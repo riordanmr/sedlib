@@ -109,6 +109,9 @@
     .itemtitle {
         font-family: Georgia;
     }
+    .barcodeinmodal {
+        font-family: Menlo,monospace; color: darkblue;
+    }
     
     /* From https://www.w3schools.com/howto/howto_css_modals.asp */
     /* The Modal (background) */
@@ -220,7 +223,10 @@
             document.getElementById("myModal").style.display = "block";
             document.getElementById("myModalContent").style.display = "block";
             //alert("For id " + id + " we have " + getAllProperties(document.getElementById(id).firstChild.nextElementSibling));
-            document.getElementById("promptItem").innerHTML = document.getElementById(id).firstChild.nextElementSibling.innerText;
+            var callNum = document.getElementById(id).firstChild.nextElementSibling.innerText;
+            var itemIdLast4 = id.substring(id.length-4);
+            document.getElementById("promptItem").innerHTML = callNum + 
+              " &nbsp; <span class='barcodeinmodal'>" + itemIdLast4 + "</span>";
             // Populate the dialog's notes element with the notes of the current item.
             var notesId = "note" + currentId.substring(1);
             document.getElementById("notes").value = document.getElementById(notesId).innerHTML;
@@ -261,6 +267,10 @@
         }
 
         function updateItemStatus(status) {
+            // Store new notes in the HTML for that item.
+            var notesId = "note" + currentId.substring(1);
+            document.getElementById(notesId).innerHTML = document.getElementById("notes").value;
+            // Update database on server.
             postItemStatus(currentId.substr(1), status, document.getElementById("notes").value);
         }
 
