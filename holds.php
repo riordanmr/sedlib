@@ -99,8 +99,8 @@
         color: "darkgray";
     }
 
-    .myhidden {
-        display: none;
+    .notesinitem {
+        font-family: Georgia; font-style: italic;
     }
 
     .idsmall {
@@ -168,7 +168,6 @@
         var currentId;
 
         function Init() {
-            //alert("Init here");
             for (elem of document.getElementsByTagName('div')){
               if(elem.getAttribute("class").includes("itemdiv")) {
                   //var id = elem.id;
@@ -386,7 +385,7 @@
                 echo "<span class='itemtitle'>$title</span><br/>\n";
                 $itemIdSpecial = "<span class='idsmall'>" . substr($itemId, 1, strlen($itemId)-4) . "</span> " . substr($itemId, strlen($itemId)-4);
                 echo "$itemIdSpecial";
-                echo "<span id='note$itemId' class='myhidden'>$notes</span>\n";
+                echo "<div id='note$itemId' class='notesinitem'>$notes</div>\n";
                 echo "<hr class='sepline'/>\n";
                 echo "</div>";
                 $prevLoc = $curLoc;
