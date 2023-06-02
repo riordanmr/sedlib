@@ -21,7 +21,7 @@
     }
     .toppanel {
         position: absolute; top: 0px; width:98%; height: 3em; bottom: 0;
-        font-size: 70%;
+        font-size: 75%;
     }
     .mainpanel {
         position: absolute; top: 60px; overflow: auto; width: 100%; bottom: 0;
