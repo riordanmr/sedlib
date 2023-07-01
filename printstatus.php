@@ -113,7 +113,7 @@ Status of Hold Items for SED <?php echo date('m/d/Y');?></td>
                 if(strlen($notes)>0) {
                     $classtop = " class='rownobotline'";
                 }
-                $itemIdSpecial = "<span class='idsmall'>" . substr($itemId, 1, strlen($itemId)-4) . "&nbsp;</span>" . substr($itemId, strlen($itemId)-4);
+                $itemIdSpecial = "<span class='idsmall'>" . substr($itemId, 0, strlen($itemId)-4) . "&nbsp;</span>" . substr($itemId, strlen($itemId)-4);
                 echo "<tr$classtop><td>$callNum</td><td>$copyNum</td><td>$title</td><td>$itemIdSpecial</td><td>$itemType</td><td>$curLoc</td></tr>\n";
                 if(strlen($notes)>0) {
                     echo "<tr class='rownotopline notes'><td></td><td colspan='5'>$notes</td></td>\n";

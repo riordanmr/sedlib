@@ -21,7 +21,7 @@
     }
     .toppanel {
         position: absolute; top: 0px; width:98%; height: 3em; bottom: 0;
-        font-size: 75%;
+        font-size: 72%;
     }
     .mainpanel {
         position: absolute; top: 60px; overflow: auto; width: 100%; bottom: 0;
@@ -168,18 +168,20 @@
         var currentId;
 
         function Init() {
-            for (elem of document.getElementsByTagName('div')){
-              if(elem.getAttribute("class").includes("itemdiv")) {
-                  //var id = elem.id;
-                  //alert("Setting onclick for " + elem.id);
-                  // This does nothing:
-                  //elem.onclick = "onItemClick();";
-                  // This always calls onItemClick with the id of the last div:
-                  // elem.onclick = function() {onItemClick(id);};
-                  elem.addEventListener('click', function(e) { 
-                      onItemClick(e);
-                  });
-              }
+            for (elem of document.getElementsByTagName('div')) {
+                if(elem.hasAttribute("class")) {
+                    if(elem.getAttribute("class").includes("itemdiv")) {
+                        //var id = elem.id;
+                        //alert("Setting onclick for " + elem.id);
+                        // This does nothing:
+                        //elem.onclick = "onItemClick();";
+                        // This always calls onItemClick with the id of the last div:
+                        // elem.onclick = function() {onItemClick(id);};
+                        elem.addEventListener('click', function(e) { 
+                            onItemClick(e);
+                        });
+                    }
+                }
             }
 
             modal = document.getElementById("myModal");
@@ -215,6 +217,8 @@
             return result;
         }
 
+        // An item has been clicked on, so create a modal dialog containing
+        // buttons to act on that item.
         function onItemClick(e) {
             var id = e.currentTarget.id;
             currentId = id;
@@ -305,7 +309,46 @@
                 getCSSRule('.found').style.setProperty("display", "", "important");
                 labelShowHide = 'Hide';
             }
+
+            // Now show or hide the location headers of each section of consecutive
+            // items with the same location. In "Hide" mode, we don't want to show
+            // the header for a section with no non-found items.
             document.getElementById('showhide').text = labelShowHide;
+            var divAllItems = document.getElementById('allitems');
+            const childNodes = divAllItems.children;
+            var nodeHdr;
+            var curHdrId = '';
+            var nNotFound = 0;
+            for (let i = 0; i < childNodes.length; i++) {
+                const node = childNodes[i];
+                var thisId = node.id;
+                if(thisId.startsWith('hdr')) {
+                    // Now that we've hit the end of a run of items in the same location,
+                    // determine the visibility of the header for the *previous* location.
+                    if(curHdrId != '') {
+                        // This isn't the special case of the very first header.
+                        if(0==nNotFound) {
+                            nodeHdr.style.display = (labelShowHide=='Show') ? 'none' : 'block';
+                        }
+                    }
+                    msg = "";
+                    nNotFound = 0;
+                    nodeHdr = node;
+                    curHdrId = thisId;
+                } else if(thisId.startsWith('i')) {
+                    if(!node.className.includes('found')) {
+                        // Here's an item that was not found, so increment count.
+                        // Actually, this could have been a boolean flag for whether
+                        // *any* non-found items were in this run of items in a location.
+                        nNotFound++;
+                    }
+                }
+            }
+            // Process last location header.
+            if(0==nNotFound) {
+                nodeHdr.style.display = (labelShowHide=='Show') ? 'none' : 'block';
+            }
+            //alert(msg);
         }
     </script>
 </head>
@@ -336,6 +379,8 @@
       </div>
 
     </div>
+
+    <div id="allitems">
     <?php
     // This defines the DB_* constants used below.
     require_once '../../holds.config.php';
@@ -371,7 +416,7 @@
                 $notes = htmlspecialchars($row["notes"]);
 
                 if($prevLoc != $curLoc) {
-                    echo "\n<h2>$curLoc</h2>\n";
+                    echo "\n<h2 id='hdr$curLoc'>$curLoc</h2>\n";
                 }
 
                 // Set the class of the item based on its status from the DB.
@@ -383,7 +428,7 @@
                 echo "<div id='i$itemId' class='$itemclass'>\n";
                 echo "<span class='itemCallNum'>$callNum</span><br/>\n";
                 echo "<span class='itemtitle'>$title</span><br/>\n";
-                $itemIdSpecial = "<span class='idsmall'>" . substr($itemId, 1, strlen($itemId)-4) . "</span> " . substr($itemId, strlen($itemId)-4);
+                $itemIdSpecial = "<span class='idsmall'>" . substr($itemId, 0, strlen($itemId)-4) . "</span> " . substr($itemId, strlen($itemId)-4);
                 echo "$itemIdSpecial";
                 echo "<div id='note$itemId' class='notesinitem'>$notes</div>\n";
                 echo "<hr class='sepline'/>\n";
@@ -402,6 +447,7 @@
     }
     doMain();
     ?>
+    </div>
 </div>
 </body>
 </html>
