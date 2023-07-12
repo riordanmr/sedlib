@@ -428,7 +428,7 @@
                 echo "<div id='i$itemId' class='$itemclass'>\n";
                 echo "<span class='itemCallNum'>$callNum</span><br/>\n";
                 echo "<span class='itemtitle'>$title</span><br/>\n";
-                $itemIdSpecial = "<span class='idsmall'>" . substr($itemId, 1, strlen($itemId)-4) . "</span> " . substr($itemId, strlen($itemId)-4);
+                $itemIdSpecial = "<span class='idsmall'>" . substr($itemId, 0, strlen($itemId)-4) . "</span> " . substr($itemId, strlen($itemId)-4);
                 echo "$itemIdSpecial";
                 echo "<div id='note$itemId' class='notesinitem'>$notes</div>\n";
                 echo "<hr class='sepline'/>\n";
