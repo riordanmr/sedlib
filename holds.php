@@ -372,9 +372,9 @@
         <span onclick="closeModal();" class="close">&times;</span>
         <p id="promptItem">Some text in the Modal..</p>
         <p><button class="myButton" onclick="markFound(); closeModal();">Found</button></p>
-        <p><button class="myButton" onclick="markStillLooking(); closeModal();">Still looking</button></p>
         <p><button class="myButton" onclick="markCantFind(); closeModal();">Can't find</button></p>
         <p><button class="myButton" onclick="markProblem(); closeModal();">Problem</button></p>
+        <p><button class="myButton" onclick="markStillLooking(); closeModal();">Still looking</button></p>
         <p><textarea id="notes" name="notes" class="notes" rows="3"></textarea></p>
       </div>
 
