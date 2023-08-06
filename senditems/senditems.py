@@ -6,6 +6,7 @@
 
 import sys
 import requests
+from tkinter import *
 
 def read_entire_file(filename):
     file = open(filename,mode='r')
@@ -14,7 +15,7 @@ def read_entire_file(filename):
     return contents
 
 def post_items(contents):
-    url = 'https://60bits.net/sedlib/postallitems.php'
+    url = 'https://scopehustler.net/zz/sedlib/postallitems.php'
     dataToPost = {'password': 'se', 'items': contents}
 
     # Send POST request with FORM data using the data parameter
@@ -30,18 +31,38 @@ def post_items(contents):
             idx = loaded.find("<")
             loaded = loaded[:idx-1]
             print(loaded)
+            return loaded
         else:
-            print("Unrecognized response: " + responseBody)
+            msg = "Unrecognized response: " + responseBody
+            print(msg)
+            return msg
     pass
+
+def show_message(msg):
+    # Create an instance of tkinter frame
+    win=Tk()
+    win.geometry("600x250")
+    win.title('senditems')
+
+    label = Label(win,text=msg,foreground='orange', font='Arial 14', 
+                  wraplength=450, justify='left')
+    label.pack(ipadx=10, ipady=10)
+
+    win.mainloop()
 
 def main():
     if len(sys.argv) != 2:
         print("Usage: python senditems.py WorkflowsHTMLItemsFilename")
     else:
-        filename = sys.argv[1]
-        contents = read_entire_file(filename)
-        print(f"Read {len(contents)} characters from {filename}")
-        post_items(contents)
+        try:
+            filename = sys.argv[1]
+            contents = read_entire_file(filename)
+            print(f"Read {len(contents)} characters from {filename}")
+            msg = post_items(contents)
+            show_message(msg)
+        except Exception as err:
+            print(f"Exception: {err}")
+            show_message(err)
     pass
 
 main()
