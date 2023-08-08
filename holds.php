@@ -12,6 +12,14 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="x-detect-telephone" content="no">
 <style>
+    /* Use a larger font, only on mobile devices.  Thanks to https://habr.com/en/sandbox/163605/ */
+    @media (pointer: coarse)  {
+	    /* mobile device */
+        body {
+           font-size: 350%;
+        }
+    }
+
     /* Thanks to https://stackoverflow.com/questions/256811/how-do-you-create-non-scrolling-div-at-the-top-of-an-html-page-without-two-sets */
     body {
         /* Disable scrollbars and ensure that the body fills the window */
@@ -53,7 +61,7 @@
         page-break-inside: avoid;
     }
     body {
-        font-size: 350%; font-family: Verdana;
+        font-family: Verdana;
     }
     h2 {
         margin-top: 0.3em;
