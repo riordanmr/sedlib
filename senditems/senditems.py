@@ -15,7 +15,7 @@ def read_entire_file(filename):
     return contents
 
 def post_items(contents):
-    url = 'https://scopehustler.net/zz/sedlib/postallitems.php'
+    url = 'http://scopehustler.net/sedlib/postallitems.php'
     dataToPost = {'password': 'se', 'items': contents}
 
     # Send POST request with FORM data using the data parameter
