@@ -46,11 +46,43 @@ table.print-friendly tr td, table.print-friendly tr th {
 </head>
 
 <body>
+    <?php
+    // This defines the DB_* constants used below.
+    require_once '../../holds.config.php';
+    function connectToDb() {
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+        // Create a new MySQLi object
+        $connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+    
+        // Check the connection
+        try {  
+            if ($connection->connect_error) {
+                echo "Connection failed: " . $connection->connect_error;
+            }
+        } catch(exception $e) {
+            echo "Exception: Connection failed: " . $connection->connect_error;
+        }
+        return $connection;
+    }
+    $connection = connectToDb();
+
+    // Display the total number of items.
+    function showItemCount() {
+        global $connection;
+        $sql = "SELECT COUNT(*) AS NRecs FROM items;";
+        $result = $connection->query($sql);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $nrecs = htmlspecialchars($row["NRecs"]);
+            echo ": " . $nrecs . " items";
+        }
+    }
+?>
 <font face="Verdana">
 <table width="100%" border="0" cellpadding="2" bordercolor="#FFFFFF">
 <tr class="tablenoborders">
 <td valign="top" align="left" colwidth="100.0%" colspan="6">
-Status of Hold Items for SED <?php echo date('m/d/Y');?></td>
+Status of Hold Items for SED <?php echo date('m/d/Y'); showItemCount();?></td>
 </tr>
 
 <!-- <tr>
@@ -73,23 +105,7 @@ Status of Hold Items for SED <?php echo date('m/d/Y');?></td>
 <b>Current location</b></td>
 </tr>
 <?php
-    // This defines the DB_* constants used below.
-    require_once '../../holds.config.php';
-    function connectToDb() {
-        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-        // Create a new MySQLi object
-        $connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
-    
-        // Check the connection
-        try {  
-            if ($connection->connect_error) {
-                echo "Connection failed: " . $connection->connect_error;
-            }
-        } catch(exception $e) {
-            echo "Exception: Connection failed: " . $connection->connect_error;
-        }
-        return $connection;
-    }
+
 
     function listRecsWhere($connection, $where, $statusDesc) {
         $sql = "SELECT * FROM items WHERE $where ORDER BY id;";
@@ -125,7 +141,7 @@ Status of Hold Items for SED <?php echo date('m/d/Y');?></td>
     }
 
     function doMain() {
-        $connection = connectToDb();
+        global $connection;
         listRecsWhere($connection, "status='cantfind'",'Items not found');
         listRecsWhere($connection, "status='problem'", 'Items with problems');
         listRecsWhere($connection, "status=''", 'Items for which we are still looking');
