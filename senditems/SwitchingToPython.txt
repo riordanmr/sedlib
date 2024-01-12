@@ -1,0 +1,5 @@
+2023-07-07  Writing senditems in Lua and running on a Windows 
+computer that I don't have good access to is just going to be
+too difficult.  I'm switching to Python, in the hopes that I
+will be able to install Python on the target Windows computer.
+MRR
