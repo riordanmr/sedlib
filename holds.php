@@ -163,6 +163,12 @@
     .myButton {
         font-size: 150%;
         width: 80%;
+        border-radius: 8px;
+    }
+
+    .buttonCurrent {
+        /*border-width: medium;*/
+        border-color: blue;
     }
 
     .notes {
@@ -225,12 +231,34 @@
             return result;
         }
 
+        // Modify the classes of the buttons in the modal dialog that allows the
+        // user to change the status of the currently-selected item:
+        // highlight the button that corresponds to the item's current found status.
+        function showCurrentStatusInModal() {
+            // Current item className will be something like "itemdiv" or "itemdiv found".
+            // Loop through all of the buttons in the modal. For each, if the current
+            // item class matches the button, set its class to myButton buttonCurrent,
+            // else set it to simply myButton.
+            // alert(document.getElementById(currentId).className);
+            var curClass = document.getElementById(currentId).className;
+            var aryButtonIds = ["btnFound", "btnCantFind", "btnProblem", "btnLooking"];
+            var aryItemClass = ["itemdiv found", "itemdiv cantfind", "itemdiv problem", "itemdiv"]
+            for (let idx = 0; idx<aryButtonIds.length; idx++) {
+                if(curClass == aryItemClass[idx]) {
+                    document.getElementById(aryButtonIds[idx]).className = "myButton buttonCurrent";
+                } else {
+                    document.getElementById(aryButtonIds[idx]).className = "myButton";
+                }
+            }
+        }
+
         // An item has been clicked on, so create a modal dialog containing
         // buttons to act on that item.
         function onItemClick(e) {
             var id = e.currentTarget.id;
             currentId = id;
             //alert("onItemClick for e " + getAllProperties(e));
+            showCurrentStatusInModal();
             document.getElementById("myModal").style.display = "block";
             document.getElementById("myModalContent").style.display = "block";
             //alert("For id " + id + " we have " + getAllProperties(document.getElementById(id).firstChild.nextElementSibling));
@@ -291,7 +319,7 @@
         }
 
         function markStillLooking() {
-            document.getElementById(currentId).className = "itemdiv stilllooking";
+            document.getElementById(currentId).className = "itemdiv"; // Was "itemdiv stilllooking"
             updateItemStatus("");
         }
 
@@ -379,10 +407,10 @@
       <div id="myModalContent" class="modalcontent">
         <span onclick="closeModal();" class="close">&times;</span>
         <p id="promptItem">Some text in the Modal..</p>
-        <p><button class="myButton" onclick="markFound(); closeModal();">Found</button></p>
-        <p><button class="myButton" onclick="markCantFind(); closeModal();">Can't find</button></p>
-        <p><button class="myButton" onclick="markProblem(); closeModal();">Problem</button></p>
-        <p><button class="myButton" onclick="markStillLooking(); closeModal();">Still looking</button></p>
+        <p><button id="btnFound" class="myButton" onclick="markFound(); closeModal();">Found</button></p>
+        <p><button id="btnCantFind" class="myButton" onclick="markCantFind(); closeModal();">Can't find</button></p>
+        <p><button id="btnProblem" class="myButton" onclick="markProblem(); closeModal();">Problem</button></p>
+        <p><button id="btnLooking" class="myButton" onclick="markStillLooking(); closeModal();">Still looking</button></p>
         <p><textarea id="notes" name="notes" class="notes" rows="3"></textarea></p>
       </div>
 
