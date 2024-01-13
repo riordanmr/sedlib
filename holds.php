@@ -334,22 +334,18 @@
             updateItemStatus("problem");
         }
 
-        function onClickShowHide() {
-            // Toogle the show/hide status of found items.  We do this by
-            // altering the CSS rule for found items.
+        function hideModeInEffect() {
             var labelShowHide = document.getElementById('showhide').text;
-            if('Hide' == labelShowHide) {
-                getCSSRule('.found').style.setProperty("display", "none", "important");
-                labelShowHide = 'Show';
-            } else {
-                getCSSRule('.found').style.setProperty("display", "", "important");
-                labelShowHide = 'Hide';
-            }
+            // If Hide mode is in effect, the control to toggle it will read "Show".
+            return (labelShowHide == "Show");
+        }
 
-            // Now show or hide the location headers of each section of consecutive
-            // items with the same location. In "Hide" mode, we don't want to show
-            // the header for a section with no non-found items.
-            document.getElementById('showhide').text = labelShowHide;
+        // Iterate over all the section headers for item location
+        // (e.g., BIO or DVD), hiding or displaying them as per the
+        // current Show/Hide setting. We hide the header only if Hide 
+        // mode is in effect, and all items in the section are "found".
+        function setLocHeadersForShowOrHide() {
+            var bHideMode = hideModeInEffect();
             var divAllItems = document.getElementById('allitems');
             const childNodes = divAllItems.children;
             var nodeHdr;
@@ -364,7 +360,7 @@
                     if(curHdrId != '') {
                         // This isn't the special case of the very first header.
                         if(0==nNotFound) {
-                            nodeHdr.style.display = (labelShowHide=='Show') ? 'none' : 'block';
+                            nodeHdr.style.display = bHideMode ? 'none' : 'block';
                         }
                     }
                     msg = "";
@@ -382,8 +378,36 @@
             }
             // Process last location header.
             if(0==nNotFound) {
-                nodeHdr.style.display = (labelShowHide=='Show') ? 'none' : 'block';
+                nodeHdr.style.display = bHideMode ? 'none' : 'block';
             }
+        }
+
+        // Perform final processing when the modal dialog for setting item status
+        // is closing.
+        function endModal() {
+            closeModal();
+            if(hideModeInEffect()) {
+                setLocHeadersForShowOrHide();        
+            }
+        }
+
+        function onClickShowHide() {
+            // Toogle the show/hide status of found items.  We do this by
+            // altering the CSS rule for found items.
+            var labelShowHide = document.getElementById('showhide').text;
+            if('Hide' == labelShowHide) {
+                getCSSRule('.found').style.setProperty("display", "none", "important");
+                labelShowHide = 'Show';
+            } else {
+                getCSSRule('.found').style.setProperty("display", "", "important");
+                labelShowHide = 'Hide';
+            }
+
+            // Now show or hide the location headers of each section of consecutive
+            // items with the same location. In "Hide" mode, we don't want to show
+            // the header for a section with no non-found items.
+            document.getElementById('showhide').text = labelShowHide;
+            setLocHeadersForShowOrHide();
             //alert(msg);
         }
     </script>
@@ -407,10 +431,10 @@
       <div id="myModalContent" class="modalcontent">
         <span onclick="closeModal();" class="close">&times;</span>
         <p id="promptItem">Some text in the Modal..</p>
-        <p><button id="btnFound" class="myButton" onclick="markFound(); closeModal();">Found</button></p>
-        <p><button id="btnCantFind" class="myButton" onclick="markCantFind(); closeModal();">Can't find</button></p>
-        <p><button id="btnProblem" class="myButton" onclick="markProblem(); closeModal();">Problem</button></p>
-        <p><button id="btnLooking" class="myButton" onclick="markStillLooking(); closeModal();">Still looking</button></p>
+        <p><button id="btnFound" class="myButton" onclick="markFound(); endModal();">Found</button></p>
+        <p><button id="btnCantFind" class="myButton" onclick="markCantFind(); endModal();">Can't find</button></p>
+        <p><button id="btnProblem" class="myButton" onclick="markProblem(); endModal();">Problem</button></p>
+        <p><button id="btnLooking" class="myButton" onclick="markStillLooking(); endModal();">Still looking</button></p>
         <p><textarea id="notes" name="notes" class="notes" rows="3"></textarea></p>
       </div>
 
