@@ -161,7 +161,7 @@
     }
 
     .myButton {
-        font-size: 150%;
+        font-size: 175%;
         width: 80%;
         border-radius: 8px;
     }
