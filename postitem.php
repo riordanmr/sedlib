@@ -25,6 +25,13 @@ function processRequest($connection) {
     // Convert it into a PHP object
     $data = json_decode($json);
 
+    // Hack to pause to simulate timeouts due to network problems. 
+    if($data->notes == "zzz") {
+        sleep(12);
+    } else if($data->notes == "zzz500") {
+        http_response_code(500);
+        exit;
+    }
     // Update the item's record.
     $stmt = $connection->prepare("UPDATE items SET status=?, notes=? WHERE itemid=?;");
     $stmt->bind_param("sss", $data->status, $data->notes, $data->itemId);

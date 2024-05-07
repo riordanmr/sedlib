@@ -174,6 +174,30 @@
     .notes {
         font-size: 100%;
     }
+
+    .errormodal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: lightred; /* Fallback color */
+    }
+
+    .errormodalcontent {
+      background-color: #ffc0c0;
+      margin: 5% auto; /* from the top and centered */
+      padding: 1em;
+      border: 8px solid #888;
+      width: 95%; /* Could be more or less, depending on screen size */
+    }
+
+    .errorclosebutton {
+        font-size: 100%;
+    }
     
 </style>
     <script src="dynamicallyAccessCSS.js"></script>
@@ -273,6 +297,23 @@
             //modalcontent.style.display = "block";
         }
 
+        // Version of fetch that errors out if it takes too long.
+        // From https://dmitripavlutin.com/timeout-fetch-request/
+        async function fetchWithTimeout(resource, options = {}) {
+            const { timeout = 6000 } = options;
+            
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+
+            const response = await fetch(resource, {
+                ...options,
+                signal: controller.signal  
+            });
+            clearTimeout(id);
+
+            return response;
+        }
+
         function postItemStatus(itemIdIn, statusIn, notesIn) {
             // Create the JSON data to be sent in the request body
             var requestData = {
@@ -282,7 +323,7 @@
             };
 
             // Make the REST request
-            fetch('postitem.php', {
+            fetchWithTimeout('postitem.php', {
                 method: 'POST',
                 headers: {        
                     'Accept': 'application/json',        
@@ -302,6 +343,7 @@
             .catch(error => {
                 // Handle any errors
                 console.error('Error:', error);
+                displayErrorModal("Error for item " + itemIdIn + ": " + error);
             });
         }
 
@@ -410,7 +452,28 @@
             setLocHeadersForShowOrHide();
             //alert(msg);
         }
-    </script>
+
+        // Display an error modal dialog with the given text.
+        function displayErrorModal(text) {
+            // Get the modal
+            var modal = document.getElementById("errorModal");
+
+            // Get the element where we will put the text
+            var modalText = document.getElementById("errorModalText");
+
+            // Put the text in the modal
+            modalText.innerHTML = text;
+
+            // Display the modal
+            modal.style.display = "block";
+        }
+
+        // Close the error modal dialog.
+        function closeErrorModal() {
+            var modal = document.getElementById("errorModal");
+            modal.style.display = "none";
+        }
+</script>
 </head>
 
 <body onload="Init();">
@@ -438,6 +501,14 @@
         <p><textarea id="notes" name="notes" class="notes" rows="3"></textarea></p>
       </div>
 
+    </div>
+
+    <!-- Error modal dialog -->
+    <div id="errorModal" class="errormodal">
+      <div class="errormodalcontent">
+        <span id="errorModalText"></span>
+        <button id="closeButton" class="errorclosebutton" onclick="closeErrorModal()">Close</button>
+      </div>
     </div>
 
     <div id="allitems">
